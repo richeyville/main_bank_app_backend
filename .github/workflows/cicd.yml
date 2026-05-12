@@ -65,14 +65,16 @@ jobs:
 
       - name: Configure Git
         run: |
-          git config user.email "richieinneh@gmail.com"
-          git config user.name "richeyville"
+          git config --global user.email "richieinneh@gmail.com"
+          git config --global user.name "richeyville"
 
       - name: Update image tag in deployment
         run: |
-          sed -i "s|$ECR_REGISTRY/$ECR_REPOSITORY:.*|$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG|g" ./bank-project/backendapi.yaml
+          sed -i "s|$ECR_REGISTRY/$ECR_REPOSITORY:.*|$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG|g" \
+              Bank-kubernetes-manifest/bank-project/backendapi.yaml
 
       - name: Commit and push changes
+        working-directory: Bank-kubernetes-manifest
         run: |
           git add bank-project/backendapi.yaml
           git commit -m "Update backend image to version $IMAGE_TAG" || echo "No changes to commit"
