@@ -1,53 +1,4 @@
-name: Bank Backend Pipeline
-
-on:
-  push:
-    branches:
-      - main
-
-jobs:
-  Continuous-Integration_build_and_push:
-    runs-on: ubuntu-latest
-    env:
-      ECR_REGISTRY: 793524670489.dkr.ecr.us-east-1.amazonaws.com
-      ECR_REPOSITORY: main_bank_app_backend
-      AWS_REGION: us-east-1
-      IMAGE_TAG: ${{ github.run_number }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Log in to Amazon ECR
-        uses: aws-actions/amazon-ecr-login@v2
-
-      - name: Build Docker image
-        run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
-                     $ECR_REGISTRY/$ECR_REPOSITORY:latest
-
-      - name: Push Docker images to ECR
-        run: |
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
-
-      - name: Clean up Docker images locally
-        if: always()
-        run: |
-          docker rmi $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG || true
-          docker rmi $ECR_REGISTRY/$ECR_REPOSITORY:latest || true
-
-  Continuous-Update_k8s_manifest:
+Continuous-Update_k8s_manifest:
     runs-on: ubuntu-latest
     needs: Continuous-Integration_build_and_push
     env:
@@ -61,7 +12,6 @@ jobs:
           GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}
         run: |
           git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/richeyville/Bank-kubernetes-manifest.git
-          cd Bank-kubernetes-manifest
 
       - name: Configure Git
         run: |
@@ -69,13 +19,18 @@ jobs:
           git config --global user.name "richeyville"
 
       - name: Update image tag in deployment
+        working-directory: Bank-kubernetes-manifest
         run: |
           sed -i "s|$ECR_REGISTRY/$ECR_REPOSITORY:.*|$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG|g" \
-              Bank-kubernetes-manifest/bank-project/backendapi.yaml
+              bank-project/backendapi.yaml
 
       - name: Commit and push changes
         working-directory: Bank-kubernetes-manifest
+        env:
+          GIT_USERNAME: ${{ secrets.GIT_USERNAME }}
+          GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}
         run: |
+          git remote set-url origin https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/richeyville/Bank-kubernetes-manifest.git
           git add bank-project/backendapi.yaml
           git commit -m "Update backend image to version $IMAGE_TAG" || echo "No changes to commit"
           git push origin main
