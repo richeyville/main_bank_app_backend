@@ -60,7 +60,7 @@ jobs:
           GIT_USERNAME: ${{ secrets.GIT_USERNAME }}
           GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}
         run: |
-          git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/richeyvilleproject/kubernetes-manifest.git
+          git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/richeyville/Bank-kubernetes-manifest.git
           cd kubernetes-manifest
 
       - name: Configure Git
