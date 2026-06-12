@@ -12,7 +12,7 @@ jobs:
   Continues-Integration_build_and_push:
     runs-on: ubuntu-latest
     env:
-      ECR_REGISTRY: 488850521901.dkr.ecr.us-east-1.amazonaws.com
+      ECR_REGISTRY: 793524670489.dkr.ecr.us-east-1.amazonaws.com
       ECR_REPOSITORY: bank-backendapi
       AWS_REGION: us-east-1
       IMAGE_TAG: ${{ github.run_number }}
@@ -60,15 +60,15 @@ jobs:
     - name: Checkout manifest repository
       uses: actions/checkout@v4
       with:
-          repository: Digital-Witch-Cloud-Computing-POD-14/kubernetes-manifest
+          repository: richeyville/bankkubernetes-manifest
           token: ${{secrets.GIT_PASSWORD}}
           path: kubernetes-manifest
 
     - name: Update manifest and push
       run: |
         cd kubernetes-manifest
-        git config --global user.email "pod14everyone@gmail.com"
-        git config --global user.name "pod14_project"
+        git config --global user.email "richeyville@outlook.com"
+        git config --global user.name "richeyville_project"
 
         # Debug: Let's see the file before we touch it
         cat bank-project/backendapi.yaml
