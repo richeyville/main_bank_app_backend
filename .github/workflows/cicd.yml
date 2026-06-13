@@ -68,7 +68,7 @@ jobs:
       run: |
         cd kubernetes-manifest
         git config --global user.email "richeyville@outlook.com"
-        git config --global user.name "richeyville_project"
+        git config --global user.name "richeyville"
 
         # Debug: Let's see the file before we touch it
         cat bank-project/backendapi.yaml
