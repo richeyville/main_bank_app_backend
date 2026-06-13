@@ -27,8 +27,8 @@ jobs:
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
 
     - name: Log in to Amazon ECR
@@ -62,7 +62,7 @@ jobs:
       with:
           repository: richeyville/bankkubernetes-manifest
           token: ${{secrets.GIT_PASSWORD}}
-          path: kubernetes-manifest
+          path: bankubernetes-manifest
 
     - name: Update manifest and push
       run: |
