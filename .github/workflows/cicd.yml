@@ -10,7 +10,7 @@ on:
 
 jobs:
   Continues-Integration_build_and_push:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     env:
       ECR_REGISTRY: 793524670489.dkr.ecr.us-east-1.amazonaws.com
       ECR_REPOSITORY: bank-backendapi
