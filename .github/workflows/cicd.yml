@@ -62,7 +62,7 @@ jobs:
       with:
           repository: richeyville/bankkubernetes-manifest
           token: ${{secrets.GIT_PASSWORD}}
-          path: bankubernetes-manifest
+          path: bankkubernetes-manifest
 
     - name: Update manifest and push
       run: |
